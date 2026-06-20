@@ -18,6 +18,14 @@ namespace YoungJoon.L2.Battle.Card
                     _dict[c.Type] = c;
         }
 
+        public void BuildAllCaches()
+        {
+            BuildDictionary();
+            foreach (var c in _cards)
+                if (c != null)
+                    c.BuildCache();
+        }
+
         public CardDataSO GetCardData(CardType type)
         {
             if (_dict == null) BuildDictionary();

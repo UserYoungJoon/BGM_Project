@@ -76,18 +76,18 @@ namespace YoungJoon.Editor
             int cost = ParseInt(Cell(row, col, "Cost"));
             var effects = ParseEffect(Cell(row, col, "Effect"));
 
-            data = LoadOrCreate(type, name);
+            data = LoadOrCreate(type);
             data.ReadData(type, name, tooltip, hp, cost, effects);
             return true;
         }
 
-        private static CardDataSO LoadOrCreate(CardType type, string name)
+        private static CardDataSO LoadOrCreate(CardType type)
         {
             string sub = type.GetCategory() == CardCategory.Skill ? "02_Skill" : "01_Attack";
             string dir = $"{DataFolder}/{sub}";
             EditorSheetImporter.EnsureFolder(dir);
 
-            string path = $"{dir}/Card_{(int)type}_{Sanitize(name)}.asset";
+            string path = $"{dir}/Card{(int)type}_{type}.asset";
             var data = AssetDatabase.LoadAssetAtPath<CardDataSO>(path);
             if (data == null)
             {
@@ -115,14 +115,6 @@ namespace YoungJoon.Editor
                 Debug.LogWarning($"[CardImport] Effect JSON 파싱 실패: {json} ({e.Message})");
                 return new Dictionary<string, float>();
             }
-        }
-
-        private static string Sanitize(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return "Unnamed";
-            foreach (char c in System.IO.Path.GetInvalidFileNameChars())
-                name = name.Replace(c, '_');
-            return name;
         }
     }
 }

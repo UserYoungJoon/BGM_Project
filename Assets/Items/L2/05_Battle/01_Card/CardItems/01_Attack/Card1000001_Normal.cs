@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace YoungJoon.L2.Battle.Card
 {
     // [일반] 자신의 현재 HP만큼 선택한 상대 카드에게 피해.
@@ -6,13 +8,23 @@ namespace YoungJoon.L2.Battle.Card
     {
         public override CardType Type => CardType.Normal;
 
-        public override void InteractWith(CardBase target)
-        {
-            int damage = CurrentHp;
-            int counter = target.CurrentHp;
+        private float _damageRatio;
+        private float _counterRatio;
 
-            target.AttackedBy(new AttackSource(this, damage));
-            AttackedBy(new AttackSource(target, counter));
+        protected override void OnSpawn()
+        {
+            _damageRatio = Data.GetData("damageBasedHpRatio");
+            _counterRatio = Data.GetData("counterBasedHpRatio");
+        }
+
+        public override InteractResult InteractWith(CardBase target)
+        {
+            var result = new InteractResult { Attacker = this, Target = target };
+            int damage = Mathf.RoundToInt(CurrentHp * _damageRatio);
+            int counter = Mathf.RoundToInt(target.CurrentHp * _counterRatio);
+            result.Hits.Add(Deal(this, target, damage));
+            result.Hits.Add(Deal(target, this, counter));
+            return result;
         }
     }
 }

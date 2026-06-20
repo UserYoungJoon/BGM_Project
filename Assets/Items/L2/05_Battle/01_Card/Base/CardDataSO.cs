@@ -22,7 +22,7 @@ namespace YoungJoon.L2.Battle.Card
 
         private Dictionary<string, float> _effectCache;
 
-        private void BuildCache()
+        public void BuildCache()
         {
             _effectCache = new Dictionary<string, float>(_effectParams.Count);
             foreach (var p in _effectParams)
@@ -31,16 +31,9 @@ namespace YoungJoon.L2.Battle.Card
 
         public float GetData(string key)
         {
-            if (_effectCache == null) BuildCache();
             if (_effectCache.TryGetValue(key, out var v)) return v;
             Debug.LogError($"[CardDataSO] effect key '{key}' not found in {_type}");
             return 0f;
-        }
-
-        public bool TryGetData(string key, out float value)
-        {
-            if (_effectCache == null) BuildCache();
-            return _effectCache.TryGetValue(key, out value);
         }
 
         public float this[string key] => GetData(key);
