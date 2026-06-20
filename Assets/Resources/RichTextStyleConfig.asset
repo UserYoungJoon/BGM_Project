@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 387b69a83232bee49817ac57a5bf1c43, type: 3}
+  m_Name: RichTextStyleConfig
+  m_EditorClassIdentifier: Assembly-CSharp::YoungJoon.L1.Text.RichTextStyleConfig
+  colorTags:
+  - tag: damage
+    color: {r: 1, g: 0.2509804, b: 0.2509804, a: 1}
+  - tag: heal
+    color: {r: 0.27450982, g: 0.78431374, b: 0.29411766, a: 1}
+  - tag: buff
+    color: {r: 0.3529412, g: 0.627451, b: 1, a: 1}
+  - tag: debuff
+    color: {r: 0.7529412, g: 0.3764706, b: 1, a: 1}
+  - tag: keyword
+    color: {r: 1, g: 0.8235294, b: 0.2901961, a: 1}
+  - tag: highlight
+    color: {r: 0.3137255, g: 0.654902, b: 0.8666667, a: 1}
+  - tag: attackDamage
+    color: {r: 1, g: 0.647, b: 0, a: 1}
+  - tag: abilityPower
+    color: {r: 0.482, g: 0.408, b: 0.933, a: 1}
+  - tag: highlightedColor
+    color: {r: 1, g: 0.992, b: 0.788, a: 1}
+  - tag: physicalDamage
+    color: {r: 0.824, g: 0.349, b: 0.125, a: 1}
+  - tag: magicDamage
+    color: {r: 0.039, g: 0.796, b: 0.902, a: 1}
+  - tag: armor
+    color: {r: 0.9372549, g: 0.7294118, b: 0.3529412, a: 1}
+  - tag: magicRes
+    color: {r: 0.306, g: 0.867, b: 0.992, a: 1}
+  - tag: shield
+    color: {r: 0.302, g: 0.816, b: 0.922, a: 1}
+  - tag: health
+    color: {r: 0.129, g: 0.604, b: 0.365, a: 1}
+  - tag: status
+    color: {r: 0.678, g: 0.463, b: 0.769, a: 1}
+  - tag: trueDamage
+    color: {r: 0.804, g: 0.98, b: 0.98, a: 1}
+  - tag: keywordMajor
+    color: {r: 0.867, g: 0.867, b: 0.467, a: 1}
+  - tag: recast
+    color: {r: 0.839, g: 0.451, b: 0.318, a: 1}
+  - tag: attackSpeed
+    color: {r: 1, g: 0.89, b: 0.518, a: 1}
+  - tag: speed
+    color: {r: 1, g: 0.992, b: 0.788, a: 1}
+  - tag: valueNormal
+    color: {r: 0.227, g: 0.231, b: 0.224, a: 1}
+  - tag: valueHighlighted
+    color: {r: 0.867, g: 0.835, b: 0.765, a: 1}
+  - tag: baseTextColor
+    color: {r: 0.627451, g: 0.60784316, b: 0.54901963, a: 1}
+  - tag: armorPen
+    color: {r: 1, g: 0.64705884, b: 0, a: 1}
+  - tag: magicPen
+    color: {r: 0.48235294, g: 0.40784314, b: 0.93333334, a: 1}
+  - tag: positive
+    color: {r: 0.53333336, g: 1, b: 0.53333336, a: 1}
+  - tag: level
+    color: {r: 1, g: 0.8666667, b: 0.26666668, a: 1}
+  - tag: adaptive
+    color: {r: 0.28235295, g: 0.76862746, b: 0.7176471, a: 1}
+  - tag: omniVamp
+    color: {r: 0.80784315, g: 0.10980392, b: 0.25882354, a: 1}
+  - tag: mainStat
+    color: {r: 1, g: 0.54901963, b: 0.68235296, a: 1}
+  - tag: lifeSteal
+    color: {r: 0.80784315, g: 0.10980392, b: 0.25882354, a: 1}
+  - tag: additionalText
+    color: {r: 0.3529412, g: 0.34901962, b: 0.33333334, a: 1}
+  iconTags: []
