@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using YoungJoon.L2.Battle.Card;
+using YoungJoon.L0.Events;
 
 public class CardPlayerBase : MonoBehaviour
 {
     [SerializeField] private int _playerName;
     [SerializeField] private bool _isBot;
+    [SerializeField] GameObjectEventBus _eventBus;
+    public GameObjectEventBus EventBus => _eventBus;
     private List<CardBase> _masterDeck;   // 소유 전체
     private List<CardBase> _drawPile;     // 뽑을 더미
     private List<CardBase> _hand;         // 손패

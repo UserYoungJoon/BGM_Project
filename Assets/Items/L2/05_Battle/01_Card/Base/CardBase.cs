@@ -10,9 +10,20 @@ namespace YoungJoon.L2.Battle.Card
 
         private int _currentHp;
         private int _maxHp;
+        private int _damage;
+        private int _heal;
+        private int _costForTurn;
 
-        public void Spawn()
+        public int CurrentHp => _currentHp;
+        public int MaxHp => _maxHp;
+        public bool IsDead => _currentHp <= 0;
+        public CardDataSO Data => _data;
+
+        public void Spawn(CardDataSO data)
         {
+            _data = data;
+            _maxHp = data.Hp;
+            _currentHp = data.Hp;
             OnSpawn();
         }
 
@@ -31,17 +42,36 @@ namespace YoungJoon.L2.Battle.Card
 
         }
 
-        public void InteractWith(CardBase otherCard)
+        public virtual void InteractWith(CardBase target)
         {
 
         }
 
-        public void AttackedBy(CardBase attacker)
+        public virtual void InteractWith(CardPlayerBase cardPlayer)
         {
 
         }
 
-        public void HealedBy(CardBase healer)
+        public void AttackedBy(in AttackSource source)
+        {
+            if (source.Damage <= 0) return;
+
+            _currentHp -= source.Damage;
+            if (_currentHp <= 0)
+            {
+                _currentHp = 0;
+                OnDead();
+            }
+        }
+
+        public void HealedBy(in HealSource source)
+        {
+            if (source.HealAmount <= 0 || IsDead) return;
+
+            _currentHp = Mathf.Min(_maxHp, _currentHp + source.HealAmount);
+        }
+
+        protected virtual void OnDead()
         {
 
         }
