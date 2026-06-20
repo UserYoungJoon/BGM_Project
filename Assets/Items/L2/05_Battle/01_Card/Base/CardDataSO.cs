@@ -8,7 +8,7 @@ namespace YoungJoon.L2.Battle.Card
         [SerializeField] private CardType _type;
         [SerializeField] private string _cardName;
         [SerializeField] private string _tooltip;
-        [SerializeField] private Sprite _icon;
+        [SerializeField] private Sprite _illustration;
         [SerializeField] private int _hp;
         [SerializeField] private int _cost;
         [SerializeField] private List<CardEffectParam> _effectParams = new();
@@ -16,7 +16,7 @@ namespace YoungJoon.L2.Battle.Card
         public CardType Type => _type;
         public string CardName => _cardName;
         public string Tooltip => _tooltip;
-        public Sprite Icon => _icon;
+        public Sprite Illustration => _illustration;
         public int Hp => _hp;
         public int Cost => _cost;
 
@@ -37,6 +37,8 @@ namespace YoungJoon.L2.Battle.Card
         }
 
         public float this[string key] => GetData(key);
+
+        public IReadOnlyDictionary<string, float> EffectMap => _effectCache;
 
 #if UNITY_EDITOR
         public void ReadData(CardType type, string cardName, string tooltip, int hp, int cost, IDictionary<string, float> effects)

@@ -20,6 +20,13 @@ namespace YoungJoon.L2.Battle.Card
             _turnStartHeal = Mathf.RoundToInt(Data.GetData("turnStartHeal"));
         }
 
+        public override Dictionary<string, int> TooltipArgs()
+            => new Dictionary<string, int>
+            {
+                { "heal", _turnStartHeal },
+                { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) }
+            };
+
         public override List<HealFact> OnTurnStart()
         {
             var facts = new List<HealFact>();

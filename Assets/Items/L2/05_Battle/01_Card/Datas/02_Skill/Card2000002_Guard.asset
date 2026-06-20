@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 108678fa620fbb0459c9f527cb48fda8, type: 3}
-  m_Name: Card1000002_Ranged
+  m_Name: Card2000002_Guard
   m_EditorClassIdentifier: Assembly-CSharp::YoungJoon.L2.Battle.Card.CardDataSO
-  _type: 1000002
-  _cardName: "\uC6D0\uAC70\uB9AC"
-  _tooltip: "\uD604\uC7AC HP\uB9CC\uD07C\uC758 \uD53C\uD574 <damage>{dmg}</damage>\uB97C
-    \uC785\uD799\uB2C8\uB2E4. \uBC18\uACA9\uBC1B\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
-  _illustration: {fileID: 21300000, guid: f7b4b6e6de38a744fae4923acd946b76, type: 3}
-  _hp: 4
-  _cost: 2
+  _type: 2000002
+  _cardName: "\uC218\uD638"
+  _tooltip: "\uC120\uD0DD\uD55C \uC544\uAD70\uC5D0\uAC8C <armor>{block}</armor>\uC758
+    \uBC29\uC5B4\uB3C4\uB97C \uBD80\uC5EC\uD569\uB2C8\uB2E4."
+  _illustration: {fileID: 21300000, guid: 24f0448dfb19574418c90b67227380e2, type: 3}
+  _hp: 3
+  _cost: 1
   _effectParams:
-  - Key: damageBasedHpRatio
-    Value: 1
-  - Key: counterBasedHpRatio
-    Value: 0
+  - Key: blockBasedMaxHpRatio
+    Value: 2

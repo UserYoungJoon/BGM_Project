@@ -10,7 +10,8 @@ namespace YoungJoon.L2.Battle.View
 {
     public class BattleView : MonoBehaviour
     {
-        [SerializeField] private RectTransform _cardLayer;
+        [SerializeField] private RectTransform _playerArea;
+        [SerializeField] private RectTransform _botArea;
         [SerializeField] private TMP_Text _turnText;
         [SerializeField] private TMP_Text _costText;
         [SerializeField] private Button _endBtn;
@@ -21,6 +22,8 @@ namespace YoungJoon.L2.Battle.View
         [SerializeField] private Button _restartBtn;
         [SerializeField] private CardView _cardViewPrefab;
         [SerializeField] private RewardCardView _rewardCardPrefab;
+        [SerializeField] private CardInfoView _userDesc;
+        [SerializeField] private CardInfoView _botDesc;
 
         private BattleManager _bm;
         private CardPlayerBase _me;
@@ -40,8 +43,8 @@ namespace YoungJoon.L2.Battle.View
             for (int i = 0; i < 3; i++)
             {
                 float x = (i - 1) * 300f;
-                _botSlots[i] = new Vector2(x, 430f);
-                _meSlots[i] = new Vector2(x, -300f);
+                _botSlots[i] = new Vector2(x, 0f);
+                _meSlots[i] = new Vector2(x, 0f);
             }
 
             _bm = BattleManager.Instance;
@@ -83,14 +86,18 @@ namespace YoungJoon.L2.Battle.View
         private CardView CreateCardView(CardBase model, Vector2[] slots, bool mine)
         {
             if (model == null) return null;
-            var v = Instantiate(_cardViewPrefab, _cardLayer);
-            v.Init(_cardLayer);
+            var area = mine ? _playerArea : _botArea;
+            var v = Instantiate(_cardViewPrefab, area);
+            v.Init(area);
             v.SetHome(slots[model.SlotIndex]);
             v.Bind(model);
             if (mine)
             {
                 v.CanDrag = CanDrag;
                 v.OnAttackDrop = OnAttackDrop;
+                v.OnDragBegin = OnDragBegin;
+                v.OnDragHover = OnDragHover;
+                v.OnDragEnd = OnDragEnd;
             }
             _views[model] = v;
             return v;
@@ -114,10 +121,38 @@ namespace YoungJoon.L2.Battle.View
         private void OnAttackDrop(CardView from, CardView target)
         {
             if (_bm.State != BattleState.Game_MyTurn) return;
-            if (from.Model == null || target.Model == null) return;
-            if (from.Model.Owner != _me || target.Model.Owner != _bot) return;
+            if (!IsValidTarget(from, target)) return;
+
             if (_bm.TryInteract(from.Model, target.Model))
                 UpdateCost();
+        }
+
+        private void OnDragBegin(CardView src)
+        {
+            _userDesc.Show(src.Model);
+        }
+
+        private void OnDragHover(CardView src, CardView hovered)
+        {
+            if (hovered != null && IsValidTarget(src, hovered))
+                _botDesc.Show(hovered.Model);
+            else
+                _botDesc.Clear();
+        }
+
+        private void OnDragEnd()
+        {
+            _userDesc.Clear();
+            _botDesc.Clear();
+        }
+
+        private bool IsValidTarget(CardView src, CardView target)
+        {
+            if (target == null || target == src || target.Model == null || target.Model.IsDead) return false;
+            var type = src.Model.InteractType;
+            if ((type & CardInteractType.EnemyCard) != 0 && target.Model.Owner == _bot) return true;
+            if ((type & CardInteractType.AllyCard) != 0 && target.Model.Owner == _me) return true;
+            return false;
         }
 
         private void OnEndTurn()
@@ -157,14 +192,14 @@ namespace YoungJoon.L2.Battle.View
             if (atkV != null)
             {
                 atkV.SetGlow(true);
-                if (tgtV != null) yield return Wait(atkV.Lunge(tgtV.CenterInLayer));
+                if (tgtV != null) yield return Wait(atkV.Lunge(tgtV.WorldCenter));
             }
 
             foreach (var hit in ir.Hits)
             {
                 var v = ViewOf(hit.Card);
                 if (v == null) continue;
-                _dmgText.Pop(hit.Amount, v.CenterInLayer, false);
+                _dmgText.Pop(hit.Amount, v.WorldCenter, false);
                 v.Hit();
                 yield return Wait(v.SetHp(hit.HpAfter));
                 if (hit.Died) { yield return Wait(v.Die()); RemoveView(hit.Card); }
@@ -226,7 +261,7 @@ namespace YoungJoon.L2.Battle.View
 
             if (!won) return;
 
-            CardType[] pool = { CardType.Normal, CardType.Ranged, CardType.Mussang, CardType.Healer };
+            CardType[] pool = { CardType.Normal, CardType.Ranged, CardType.Mussang, CardType.Healer, CardType.Guard };
             for (int i = 0; i < 3; i++)
             {
                 var type = pool[Random.Range(0, pool.Length)];

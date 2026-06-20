@@ -34,7 +34,8 @@ namespace YoungJoon.L2.Battle.Card
         Normal = 1000001,
         Ranged = 1000002,
         Mussang = 1000003,
-        Healer = 2000001
+        Healer = 2000001,
+        Guard = 2000002
     }
 
     public static class CardTypeExtensions

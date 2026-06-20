@@ -194,7 +194,7 @@ namespace YoungJoon.L2.Battle
         {
             return new List<CardType>
             {
-                CardType.Normal, CardType.Normal, CardType.Ranged,
+                CardType.Normal, CardType.Guard, CardType.Ranged,
                 CardType.Mussang, CardType.Healer, CardType.Normal
             };
         }

@@ -49,8 +49,11 @@ public class CardPlayerBase : MonoBehaviour
     {
         Clear();
 
+        var order = new List<CardType>(_deck);
+        Shuffle(order);
+
         var built = new List<CardBase>();
-        foreach (var type in _deck)
+        foreach (var type in order)
         {
             var card = CardFactory.Create(type);
             if (card == null) continue;
@@ -105,6 +108,17 @@ public class CardPlayerBase : MonoBehaviour
         for (int i = 0; i < FieldSize; i++)
             if (_field[i] != null && !_field[i].IsDead && _field[i] != self)
                 yield return _field[i];
+    }
+
+    private static void Shuffle(List<CardType> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            var tmp = list[i];
+            list[i] = list[j];
+            list[j] = tmp;
+        }
     }
 
     private void PlaceOnField(CardBase card, int slot)

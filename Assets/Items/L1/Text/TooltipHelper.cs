@@ -30,6 +30,14 @@ namespace YoungJoon.L1.Text
             return Build(template, dict);
         }
 
+        public static string Build(string template, IReadOnlyDictionary<string, int> values)
+        {
+            var dict = new Dictionary<string, string>(values.Count);
+            foreach (var kv in values)
+                dict[kv.Key] = kv.Value.ToString();
+            return Build(template, dict);
+        }
+
         public static string ReplaceBraces(string raw, IReadOnlyDictionary<string, string> values)
         {
             if (string.IsNullOrEmpty(raw) || values == null)

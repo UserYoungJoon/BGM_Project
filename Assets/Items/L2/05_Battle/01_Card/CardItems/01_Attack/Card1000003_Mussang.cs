@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace YoungJoon.L2.Battle.Card
@@ -17,6 +18,13 @@ namespace YoungJoon.L2.Battle.Card
             _damageRatio = Data.GetData("damageBasedHpRatio");
             _splashRatio = Data.GetData("splashBasedHpRatio");
         }
+
+        public override Dictionary<string, int> TooltipArgs()
+            => new Dictionary<string, int>
+            {
+                { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) },
+                { "splash", Mathf.RoundToInt(CurrentHp * _splashRatio) }
+            };
 
         public override InteractResult InteractWith(CardBase target)
         {
