@@ -48,6 +48,9 @@ namespace YoungJoon.L2.Battle.View
         {
             _bg.color = CardColors.Of(data.Type);
             _nameText.text = !string.IsNullOrEmpty(data.CardName) ? data.CardName : data.Type.ToString();
+            _hpText.text = data.Hp.ToString();
+            _hpFill.fillAmount = 1f;
+            _damageFill.fillAmount = 1f;
             if (_portrait != null)
             {
                 _portrait.sprite = data.Illustration;
