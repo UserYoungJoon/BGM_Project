@@ -7,7 +7,7 @@ namespace YoungJoon.L2.Battle.View
     public class DamageTextManager : MonoBehaviour
     {
         [SerializeField] private RectTransform _layer;
-        [SerializeField] private TMP_Text _textPrefab;
+        [SerializeField] private TextMeshProUGUI _textPrefab;
 
         public void Pop(int amount, Vector3 worldPos, bool heal)
         {

@@ -12,22 +12,24 @@ namespace YoungJoon.L2.Battle.View
     {
         [SerializeField] private RectTransform _playerArea;
         [SerializeField] private RectTransform _botArea;
-        [SerializeField] private TMP_Text _turnText;
-        [SerializeField] private TMP_Text _costText;
+        [SerializeField] private TextMeshProUGUI _turnText;
+        [SerializeField] private TextMeshProUGUI _costText;
         [SerializeField] private Button _endBtn;
         [SerializeField] private DamageTextManager _dmgText;
         [SerializeField] private GameObject _resultPanel;
-        [SerializeField] private TMP_Text _resultTitle;
+        [SerializeField] private TextMeshProUGUI _resultTitle;
         [SerializeField] private RectTransform _rewardContainer;
         [SerializeField] private Button _restartBtn;
         [SerializeField] private CardView _cardViewPrefab;
         [SerializeField] private RewardCardView _rewardCardPrefab;
         [SerializeField] private CardInfoView _userDesc;
         [SerializeField] private CardInfoView _botDesc;
+        [SerializeField] private TargetingArrow _arrow;
 
-        private BattleManager _bm;
         private CardPlayerBase _me;
         private CardPlayerBase _bot;
+        private CardView _draggingCard;
+        private CardView _glowingTarget;
 
         private readonly Dictionary<CardBase, CardView> _views = new Dictionary<CardBase, CardView>();
         private readonly Queue<BattleStep> _queue = new Queue<BattleStep>();
@@ -47,22 +49,21 @@ namespace YoungJoon.L2.Battle.View
                 _meSlots[i] = new Vector2(x, 0f);
             }
 
-            _bm = BattleManager.Instance;
-            if (_bm == null) { Debug.LogError("[BattleView] BattleManager.Instance 없음"); return; }
+            if (BattleManager.Instance == null) { Debug.LogError("[BattleView] BattleManager.Instance 없음"); return; }
 
             _endBtn.onClick.AddListener(OnEndTurn);
-            _restartBtn.onClick.AddListener(() => { _resultPanel.SetActive(false); _bm.RestartRun(); });
+            _restartBtn.onClick.AddListener(() => { _resultPanel.SetActive(false); BattleManager.Instance.RestartRun(); });
             _resultPanel.SetActive(false);
 
             _me = new GameObject("Me").AddComponent<CardPlayerBase>();
             _bot = new GameObject("Bot").AddComponent<CardPlayerBase>();
 
-            _bm.OnBattleStarted += BuildBoard;
-            _bm.OnResolved += OnResolved;
-            if (_bm.EventBus != null)
-                _bm.EventBus.ConnectEvent<BattleEndedEvent>(OnBattleEnded);
+            BattleManager.Instance.OnBattleStarted += BuildBoard;
+            BattleManager.Instance.OnResolved += OnResolved;
+            if (BattleManager.Instance.EventBus != null)
+                BattleManager.Instance.EventBus.ConnectEvent<BattleEndedEvent>(OnBattleEnded);
 
-            _bm.StartRun(_me, _bot);
+            BattleManager.Instance.StartRun(_me, _bot);
         }
 
         // ---------- 보드 ----------
@@ -88,7 +89,6 @@ namespace YoungJoon.L2.Battle.View
             if (model == null) return null;
             var area = mine ? _playerArea : _botArea;
             var v = Instantiate(_cardViewPrefab, area);
-            v.Init(area);
             v.SetHome(slots[model.SlotIndex]);
             v.Bind(model);
             if (mine)
@@ -113,35 +113,54 @@ namespace YoungJoon.L2.Battle.View
         // ---------- 입력 ----------
         private bool CanDrag(CardView v)
         {
-            return _bm.State == BattleState.Game_MyTurn
+            return BattleManager.Instance.State == BattleState.Game_MyTurn
                    && v.Model != null && v.Model.Owner == _me && !v.Model.IsDead
-                   && _bm.Cost >= v.Model.Cost;
+                   && BattleManager.Instance.Cost >= v.Model.Cost;
         }
 
         private void OnAttackDrop(CardView from, CardView target)
         {
-            if (_bm.State != BattleState.Game_MyTurn) return;
+            if (BattleManager.Instance.State != BattleState.Game_MyTurn) return;
             if (!IsValidTarget(from, target)) return;
 
-            if (_bm.TryInteract(from.Model, target.Model))
+            if (BattleManager.Instance.TryInteract(from.Model, target.Model))
                 UpdateCost();
         }
 
         private void OnDragBegin(CardView src)
         {
+            _draggingCard = src;
+            src.SetGlow(true);
             _userDesc.Show(src.Model);
+            _arrow.Begin(src.Rect);
         }
 
-        private void OnDragHover(CardView src, CardView hovered)
+        private void OnDragHover(CardView src, CardView hovered, Vector2 screen)
         {
-            if (hovered != null && IsValidTarget(src, hovered))
-                _botDesc.Show(hovered.Model);
-            else
-                _botDesc.Clear();
+            bool valid = hovered != null && IsValidTarget(src, hovered);
+            var newTarget = valid ? hovered : null;
+            if (_glowingTarget != newTarget)
+            {
+                if (_glowingTarget != null) _glowingTarget.SetGlow(false);
+                if (newTarget != null) newTarget.SetGlow(true);
+                _glowingTarget = newTarget;
+            }
+
+            if (valid) _botDesc.Show(hovered.Model); else _botDesc.Clear();
+
+            var kind = !valid ? TargetingArrow.TargetKind.None
+                     : hovered.Model.Owner == _bot ? TargetingArrow.TargetKind.Enemy
+                     : TargetingArrow.TargetKind.Ally;
+            _arrow.Aim(screen, kind);
         }
 
         private void OnDragEnd()
         {
+            if (_draggingCard != null) _draggingCard.SetGlow(false);
+            if (_glowingTarget != null) _glowingTarget.SetGlow(false);
+            _draggingCard = null;
+            _glowingTarget = null;
+            _arrow.Hide();
             _userDesc.Clear();
             _botDesc.Clear();
         }
@@ -157,10 +176,10 @@ namespace YoungJoon.L2.Battle.View
 
         private void OnEndTurn()
         {
-            if (_animating || _bm.State != BattleState.Game_MyTurn) return;
+            if (_animating || BattleManager.Instance.State != BattleState.Game_MyTurn) return;
             _turnText.text = "상대 턴...";
             _endBtn.interactable = false;
-            _bm.EndTurn();
+            BattleManager.Instance.EndTurn();
             if (!_animating) FinishTurnCycle();
         }
 
@@ -189,11 +208,8 @@ namespace YoungJoon.L2.Battle.View
             if (ir == null || ir.Attacker == null) yield break;
             var atkV = ViewOf(ir.Attacker);
             var tgtV = ViewOf(ir.Target);
-            if (atkV != null)
-            {
-                atkV.SetGlow(true);
-                if (tgtV != null) yield return Wait(atkV.Lunge(tgtV.WorldCenter));
-            }
+            if (atkV != null && tgtV != null)
+                yield return Wait(atkV.Lunge(tgtV.WorldCenter));
 
             foreach (var hit in ir.Hits)
             {
@@ -204,9 +220,6 @@ namespace YoungJoon.L2.Battle.View
                 yield return Wait(v.SetHp(hit.HpAfter));
                 if (hit.Died) { yield return Wait(v.Die()); RemoveView(hit.Card); }
             }
-
-            var still = ViewOf(ir.Attacker);
-            if (still != null) still.SetGlow(false);
         }
 
         private IEnumerator AnimateSpawns(List<CardBase> spawned)
@@ -236,12 +249,12 @@ namespace YoungJoon.L2.Battle.View
 
         private void ResetTurnUI()
         {
-            _turnText.text = "내 턴   |   Stage " + (_bm.Stage + 1);
-            _endBtn.interactable = _bm.State == BattleState.Game_MyTurn;
+            _turnText.text = "내 턴   |   Stage " + (BattleManager.Instance.Stage + 1);
+            _endBtn.interactable = BattleManager.Instance.State == BattleState.Game_MyTurn;
             UpdateCost();
         }
 
-        private void UpdateCost() { _costText.text = "Cost " + _bm.Cost + " / " + _bm.CostPerTurn; }
+        private void UpdateCost() { _costText.text = "Cost " + BattleManager.Instance.Cost + " / " + BattleManager.Instance.CostPerTurn; }
 
         private void RefreshAllHp() { foreach (var kv in _views) if (kv.Value != null && kv.Key != null && !kv.Key.IsDead) kv.Value.RefreshHp(); }
 
@@ -266,7 +279,7 @@ namespace YoungJoon.L2.Battle.View
             {
                 var type = pool[Random.Range(0, pool.Length)];
                 var card = Instantiate(_rewardCardPrefab, _rewardContainer);
-                card.Set(_bm.GetCardData(type), () => { _resultPanel.SetActive(false); _bm.PickRewardAndContinue(type); });
+                card.Set(BattleManager.Instance.GetCardData(type), () => { _resultPanel.SetActive(false); BattleManager.Instance.PickRewardAndContinue(type); });
             }
         }
     }

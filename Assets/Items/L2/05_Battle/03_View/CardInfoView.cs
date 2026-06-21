@@ -7,11 +7,11 @@ namespace YoungJoon.L2.Battle.View
 {
     public class CardInfoView : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _name;
-        [SerializeField] private TMP_Text _hp;
-        [SerializeField] private TMP_Text _cate;
-        [SerializeField] private TMP_Text _cost;
-        [SerializeField] private TMP_Text _tooltip;
+        [SerializeField] private TextMeshProUGUI _name;
+        [SerializeField] private TextMeshProUGUI _hp;
+        [SerializeField] private TextMeshProUGUI _cate;
+        [SerializeField] private TextMeshProUGUI _cost;
+        [SerializeField] private TextMeshProUGUI _tooltip;
 
         public void Show(CardBase card)
         {

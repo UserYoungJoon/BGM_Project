@@ -14,15 +14,14 @@ namespace YoungJoon.L2.Battle.View
         [SerializeField] private Image _bg;
         [SerializeField] private Image _hpFill;
         [SerializeField] private Image _damageFill;
-        [SerializeField] private TMP_Text _nameText;
-        [SerializeField] private TMP_Text _hpText;
+        [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _hpText;
         [SerializeField] private Image _portrait;
 
         public CardBase Model { get; private set; }
 
         private RectTransform _rt;
         private CanvasGroup _cg;
-        private RectTransform _layer;
         private Vector2 _home;
         private bool _dragging;
         private Tweener _damageTween;
@@ -32,7 +31,7 @@ namespace YoungJoon.L2.Battle.View
         public System.Func<CardView, bool> CanDrag;
         public System.Action<CardView, CardView> OnAttackDrop;
         public System.Action<CardView> OnDragBegin;
-        public System.Action<CardView, CardView> OnDragHover;
+        public System.Action<CardView, CardView, Vector2> OnDragHover;
         public System.Action OnDragEnd;
 
         public RectTransform Rect => _rt;
@@ -44,8 +43,6 @@ namespace YoungJoon.L2.Battle.View
             _rt = (RectTransform)transform;
             _cg = GetComponent<CanvasGroup>();
         }
-
-        public void Init(RectTransform layer) => _layer = layer;
 
         public void Set(CardDataSO data)
         {
@@ -151,13 +148,11 @@ namespace YoungJoon.L2.Battle.View
             OnDragBegin?.Invoke(this);
         }
 
+        // 카드는 안 움직이고 커서 위치만 넘김 (화살표 인디케이터가 받아 그림)
         public void OnDrag(PointerEventData e)
         {
             if (!_dragging) return;
-            Vector2 lp;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_layer, e.position, e.pressEventCamera, out lp);
-            _rt.anchoredPosition = lp;
-            OnDragHover?.Invoke(this, RaycastCardView(e));
+            OnDragHover?.Invoke(this, RaycastCardView(e), e.position);
         }
 
         public void OnEndDrag(PointerEventData e)
@@ -165,22 +160,12 @@ namespace YoungJoon.L2.Battle.View
             if (!_dragging) return;
             _dragging = false;
             _cg.blocksRaycasts = true;
+            _rt.DOScale(1f, 0.1f);
 
             var target = RaycastCardView(e);
             OnDragEnd?.Invoke();
-
-            if (target != null)
-            {
-                _rt.DOKill();
-                _rt.localScale = Vector3.one;
-                _rt.anchoredPosition = _home;
-                if (OnAttackDrop != null) OnAttackDrop(this, target);
-            }
-            else
-            {
-                _rt.DOScale(1f, 0.1f);
-                _rt.DOAnchorPos(_home, 0.15f);
-            }
+            if (target != null && OnAttackDrop != null)
+                OnAttackDrop(this, target);
         }
 
         private CardView RaycastCardView(PointerEventData e)

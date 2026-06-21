@@ -8,7 +8,7 @@ namespace YoungJoon.L2.Battle.View
     public class RewardCardView : MonoBehaviour
     {
         [SerializeField] private Image _bg;
-        [SerializeField] private TMP_Text _nameText;
+        [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private Button _button;
 
         public void Set(CardDataSO data, System.Action onPick)
