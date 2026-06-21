@@ -4,6 +4,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using YoungJoon.L1.App;
 using YoungJoon.L1.Sound;
 using YoungJoon.L1.UI;
 using YoungJoon.L2.Battle.Card;
@@ -240,8 +241,9 @@ namespace YoungJoon.L2.Battle.View
                 v.Hit();
                 _playerShaker.Shake();
                 _botShaker.Shake();
+                Haptic.Light();
                 yield return Wait(v.SetHp(hit.HpAfter));
-                if (hit.Died) { SoundManager.Instance.Play(SoundKey.Die); yield return Wait(v.Die()); RemoveView(hit.Card); }
+                if (hit.Died) { SoundManager.Instance.Play(SoundKey.Die); Haptic.Heavy(); yield return Wait(v.Die()); RemoveView(hit.Card); }
             }
         }
 
