@@ -7,5 +7,6 @@ namespace YoungJoon.L2.Battle
     {
         public InteractResult Interaction;
         public readonly List<CardBase> Spawned = new List<CardBase>();
+        public readonly List<HealFact> Heals = new List<HealFact>();
     }
 }

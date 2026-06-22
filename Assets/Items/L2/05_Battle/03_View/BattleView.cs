@@ -218,6 +218,7 @@ namespace YoungJoon.L2.Battle.View
             {
                 var step = _queue.Dequeue();
                 yield return AnimateInteraction(step.Interaction);
+                yield return AnimateHeals(step.Heals);
                 yield return AnimateSpawns(step.Spawned);
             }
             _animating = false;
@@ -232,11 +233,19 @@ namespace YoungJoon.L2.Battle.View
             if (atkV != null && tgtV != null)
                 yield return Wait(atkV.Lunge(tgtV.WorldCenter));
 
+            if (ir.Attacker.Type == CardType.Guard)
+            {
+                SoundManager.Instance.Play(SoundKey.Block);
+                if (tgtV != null) EffectManager.Instance.PlayEffect("block", tgtV.WorldCenter);
+            }
+
+            string hitFx = EffectKeyForHit(ir.Attacker.Type);
             foreach (var hit in ir.Hits)
             {
                 var v = ViewOf(hit.Card);
                 if (v == null) continue;
                 SoundManager.Instance.Play(hit.Card == ir.Attacker ? SoundKey.Counter : SoundKey.Hit);
+                EffectManager.Instance.PlayEffect(hitFx, v.WorldCenter);
                 _dmgText.Pop(hit.Amount, v.WorldCenter, false);
                 v.Hit();
                 _playerShaker.Shake();
@@ -244,6 +253,28 @@ namespace YoungJoon.L2.Battle.View
                 Haptic.Light();
                 yield return Wait(v.SetHp(hit.HpAfter));
                 if (hit.Died) { SoundManager.Instance.Play(SoundKey.Die); Haptic.Heavy(); yield return Wait(v.Die()); RemoveView(hit.Card); }
+            }
+        }
+
+        private IEnumerator AnimateHeals(List<HealFact> heals)
+        {
+            if (heals == null || heals.Count == 0) yield break;
+            foreach (var hf in heals)
+            {
+                var v = ViewOf(hf.Card);
+                if (v == null) continue;
+                EffectManager.Instance.PlayEffect("heal", v.WorldCenter);
+                yield return Wait(v.SetHp(hf.HpAfter));
+            }
+        }
+
+        private static string EffectKeyForHit(CardType type)
+        {
+            switch (type)
+            {
+                case CardType.Ranged: return "hit_ranged";
+                case CardType.Mussang: return "hit_mussang";
+                default: return "hit_normal";
             }
         }
 

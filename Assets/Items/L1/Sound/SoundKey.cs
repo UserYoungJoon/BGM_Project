@@ -13,5 +13,6 @@ namespace YoungJoon.L1.Sound
         public const string TurnChanged = "TurnChanged";   // onTurnChanged
         public const string Win = "Win";                   // winSound
         public const string Lose = "Lose";                 // loseSound
+        public const string Block = "Block";               // block (수호 방어도 부여)
     }
 }

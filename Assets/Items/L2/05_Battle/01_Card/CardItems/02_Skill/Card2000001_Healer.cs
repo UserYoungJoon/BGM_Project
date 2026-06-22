@@ -34,8 +34,10 @@ namespace YoungJoon.L2.Battle.Card
 
             foreach (var ally in Owner.AliveFieldCardsExcept(this))
             {
+                int before = ally.CurrentHp;
                 ally.HealedBy(new HealSource(this, _turnStartHeal));
-                facts.Add(new HealFact { Card = ally, Amount = _turnStartHeal, HpAfter = ally.CurrentHp });
+                if (ally.CurrentHp > before)
+                    facts.Add(new HealFact { Card = ally, Amount = ally.CurrentHp - before, HpAfter = ally.CurrentHp });
             }
             return facts;
         }

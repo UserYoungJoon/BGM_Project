@@ -76,8 +76,13 @@ namespace YoungJoon.L2.Battle
         private void BeginTurn(CardPlayerBase player)
         {
             _cost = _costPerTurn;
+            var step = new BattleStep();
             foreach (var card in player.AliveFieldCards())
-                card.OnTurnStart();
+            {
+                var heals = card.OnTurnStart();
+                if (heals != null && heals.Count > 0) step.Heals.AddRange(heals);
+            }
+            if (step.Heals.Count > 0) OnResolved?.Invoke(step);
         }
 
         public bool TryInteract(CardBase attacker, CardBase target)

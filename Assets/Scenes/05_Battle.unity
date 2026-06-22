@@ -5512,6 +5512,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 890207287}
   m_CullTransparentMesh: 1
+--- !u!1 &899427259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 899427261}
+  - component: {fileID: 899427260}
+  m_Layer: 0
+  m_Name: EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &899427260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899427259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba5bf9121057204f810842c17150c7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YoungJoon.L1.App.EffectManager
+  _layer: {fileID: 1929663783}
+  _effects:
+  - Key: hit_normal
+    Prefab: {fileID: 313363625914405481, guid: 52e04d516478c49458ec663064837428, type: 3}
+    Duration: 1.2
+  - Key: heal
+    Prefab: {fileID: 1498204855926511830, guid: 90b4843b165f35945a7c7d63535d8497, type: 3}
+    Duration: 1.2
+  - Key: hit_ranged
+    Prefab: {fileID: 5145679534653217783, guid: 803fec1428cfb464eaf85dd84fea58b9, type: 3}
+    Duration: 1.2
+  - Key: hit_mussang
+    Prefab: {fileID: 7695708573207141907, guid: 359f31a1efd41b6419b18a49c736a986, type: 3}
+    Duration: 1.2
+  - Key: block
+    Prefab: {fileID: 8752824989768775853, guid: 4244e1b3e24fb5a43a6faa451e2c2c00, type: 3}
+    Duration: 1.2
+--- !u!4 &899427261
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899427259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &911898682
 GameObject:
   m_ObjectHideFlags: 0
@@ -13064,6 +13125,9 @@ MonoBehaviour:
   - Key: Lose
     Clip: {fileID: 8300000, guid: 34eb08b633cd3034390b47669be140fe, type: 3}
     Volume: 1
+  - Key: Block
+    Clip: {fileID: 8300000, guid: 78a58a264ba969046979d5608013c54a, type: 3}
+    Volume: 1
 --- !u!82 &2089148041
 AudioSource:
   m_ObjectHideFlags: 0
@@ -13442,3 +13506,4 @@ SceneRoots:
   - {fileID: 1078131648}
   - {fileID: 208991016}
   - {fileID: 2089148042}
+  - {fileID: 899427261}
