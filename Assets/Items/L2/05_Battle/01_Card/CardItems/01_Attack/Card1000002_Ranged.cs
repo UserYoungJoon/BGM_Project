@@ -17,12 +17,10 @@ namespace YoungJoon.L2.Battle.Card
         public override Dictionary<string, int> TooltipArgs()
             => new Dictionary<string, int> { { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) } };
 
-        public override InteractResult InteractWith(CardBase target)
+        public override void InteractWith(CardBase target)
         {
-            var result = new InteractResult { Attacker = this, Target = target };
             int damage = Mathf.RoundToInt(CurrentHp * _damageRatio);
-            result.Hits.Add(Deal(this, target, damage));
-            return result;
+            BattleManager.Instance.Deal(this, target, damage);
         }
     }
 }

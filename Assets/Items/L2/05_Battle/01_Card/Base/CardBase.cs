@@ -35,20 +35,16 @@ namespace YoungJoon.L2.Battle.Card
 
         protected virtual void OnSpawn() { }
 
-        public virtual List<HealFact> OnTurnStart() => null;
+        public virtual void OnTurnStart() { }
         public virtual void OnTurnEnd() { }
-
-        public virtual InteractResult InteractWith(CardBase target)
-            => new InteractResult { Attacker = this, Target = target };
-
-        public virtual void InteractWith(CardPlayerBase cardPlayer) { }
+        public virtual void InteractWith(CardBase target) { }
 
         public void AddBlock(int amount)
         {
             if (amount > 0) _block += amount;
         }
 
-        public void AttackedBy(in AttackSource source)
+        public void AttackedBy(AttackSource source)
         {
             if (source.Damage <= 0) return;
             int dmg = source.Damage;
@@ -62,16 +58,10 @@ namespace YoungJoon.L2.Battle.Card
             if (_currentHp < 0) _currentHp = 0;
         }
 
-        public void HealedBy(in HealSource source)
+        public void HealedBy(HealSource source)
         {
             if (source.HealAmount <= 0 || IsDead) return;
             _currentHp = Mathf.Min(_maxHp, _currentHp + source.HealAmount);
-        }
-
-        protected DamageFact Deal(CardBase from, CardBase victim, int amount)
-        {
-            victim.AttackedBy(new AttackSource(from, amount));
-            return new DamageFact { Card = victim, Amount = amount, HpAfter = victim.CurrentHp, Died = victim.IsDead };
         }
 
         public virtual string GetLocalizedTooltip() => _data.Tooltip;

@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-
 namespace YoungJoon.L2.Battle.Card
 {
-    public struct DamageFact
+    public struct DamageResult
     {
         public CardBase Card;
         public int Amount;
@@ -10,17 +8,16 @@ namespace YoungJoon.L2.Battle.Card
         public bool Died;
     }
 
-    public struct HealFact
+    public struct HealResult
     {
         public CardBase Card;
         public int Amount;
         public int HpAfter;
     }
 
-    public class InteractResult
+    public struct BlockResult
     {
-        public CardBase Attacker;
-        public CardBase Target;
-        public List<DamageFact> Hits = new List<DamageFact>();
+        public CardBase Card;
+        public int Amount;
     }
 }

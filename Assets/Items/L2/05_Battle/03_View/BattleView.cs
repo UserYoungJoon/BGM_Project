@@ -72,9 +72,6 @@ namespace YoungJoon.L2.Battle.View
             _rewardTabGroup.EventBus.ConnectEvent<OnTabChanged>(OnRewardTabChanged);
             _resultPanel.SetActive(false);
 
-            _me = new GameObject("Me").AddComponent<CardPlayerBase>();
-            _bot = new GameObject("Bot").AddComponent<CardPlayerBase>();
-
             BattleManager.Instance.OnBattleStarted += BuildBoard;
             BattleManager.Instance.OnResolved += OnResolved;
             if (BattleManager.Instance.EventBus != null)
@@ -83,7 +80,9 @@ namespace YoungJoon.L2.Battle.View
                 BattleManager.Instance.EventBus.ConnectEvent<TurnChangedEvent>(OnTurnChanged);
             }
 
-            BattleManager.Instance.StartRun(_me, _bot);
+            _me = BattleManager.Instance.LocalPlayer;
+            _bot = BattleManager.Instance.BotPlayer;
+            BattleManager.Instance.StartRun();
         }
 
         // ---------- 보드 ----------
@@ -107,27 +106,27 @@ namespace YoungJoon.L2.Battle.View
         private CardView CreateCardView(CardBase model, Vector2[] slots, bool mine)
         {
             if (model == null) return null;
-            var area = mine ? _playerArea : _botArea;
-            var v = Instantiate(_cardViewPrefab, area);
-            v.SetHome(slots[model.SlotIndex]);
-            v.Bind(model);
+            RectTransform area = mine ? _playerArea : _botArea;
+            CardView cardView = Instantiate(_cardViewPrefab, area);
+            cardView.SetHome(slots[model.SlotIndex]);
+            cardView.Bind(model);
             if (mine)
             {
-                v.CanDrag = CanDrag;
-                v.OnAttackDrop = OnAttackDrop;
-                v.OnDragBegin = OnDragBegin;
-                v.OnDragHover = OnDragHover;
-                v.OnDragEnd = OnDragEnd;
+                cardView.CanDrag = CanDrag;
+                cardView.OnAttackDrop = OnAttackDrop;
+                cardView.OnDragBegin = OnDragBegin;
+                cardView.OnDragHover = OnDragHover;
+                cardView.OnDragEnd = OnDragEnd;
             }
-            _views[model] = v;
-            return v;
+            _views[model] = cardView;
+            return cardView;
         }
 
-        private CardView ViewOf(CardBase c) { return (c != null && _views.TryGetValue(c, out var v)) ? v : null; }
+        private CardView ViewOf(CardBase c) { return (c != null && _views.TryGetValue(c, out CardView v)) ? v : null; }
 
         private void RemoveView(CardBase c)
         {
-            if (c != null && _views.TryGetValue(c, out var v)) { if (v != null) Destroy(v.gameObject); _views.Remove(c); }
+            if (c != null && _views.TryGetValue(c, out CardView v)) { if (v != null) Destroy(v.gameObject); _views.Remove(c); }
         }
 
         // ---------- 입력 ----------
@@ -217,7 +216,7 @@ namespace YoungJoon.L2.Battle.View
             while (_queue.Count > 0)
             {
                 var step = _queue.Dequeue();
-                yield return AnimateInteraction(step.Interaction);
+                yield return AnimateInteraction(step);
                 yield return AnimateHeals(step.Heals);
                 yield return AnimateSpawns(step.Spawned);
             }
@@ -225,26 +224,27 @@ namespace YoungJoon.L2.Battle.View
             FinishTurnCycle();
         }
 
-        private IEnumerator AnimateInteraction(InteractResult ir)
+        private IEnumerator AnimateInteraction(BattleStep step)
         {
-            if (ir == null || ir.Attacker == null) yield break;
-            var atkV = ViewOf(ir.Attacker);
-            var tgtV = ViewOf(ir.Target);
+            var atkV = ViewOf(step.Attacker);
+            var tgtV = ViewOf(step.Target);
             if (atkV != null && tgtV != null)
                 yield return Wait(atkV.Lunge(tgtV.WorldCenter));
 
-            if (ir.Attacker.Type == CardType.Guard)
+            foreach (var blk in step.Blocks)
             {
+                var bv = ViewOf(blk.Card);
+                if (bv == null) continue;
                 SoundManager.Instance.Play(SoundKey.Block);
-                if (tgtV != null) EffectManager.Instance.PlayEffect("block", tgtV.WorldCenter);
+                EffectManager.Instance.PlayEffect("block", bv.WorldCenter);
             }
 
-            string hitFx = EffectKeyForHit(ir.Attacker.Type);
-            foreach (var hit in ir.Hits)
+            string hitFx = step.Attacker != null ? EffectKeyForHit(step.Attacker.Type) : "hit_normal";
+            foreach (var hit in step.Hits)
             {
                 var v = ViewOf(hit.Card);
                 if (v == null) continue;
-                SoundManager.Instance.Play(hit.Card == ir.Attacker ? SoundKey.Counter : SoundKey.Hit);
+                SoundManager.Instance.Play(hit.Card == step.Attacker ? SoundKey.Counter : SoundKey.Hit);
                 EffectManager.Instance.PlayEffect(hitFx, v.WorldCenter);
                 _dmgText.Pop(hit.Amount, v.WorldCenter, false);
                 v.Hit();
@@ -256,7 +256,7 @@ namespace YoungJoon.L2.Battle.View
             }
         }
 
-        private IEnumerator AnimateHeals(List<HealFact> heals)
+        private IEnumerator AnimateHeals(List<HealResult> heals)
         {
             if (heals == null || heals.Count == 0) yield break;
             foreach (var hf in heals)

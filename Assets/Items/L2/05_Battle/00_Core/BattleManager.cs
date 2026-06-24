@@ -15,12 +15,13 @@ namespace YoungJoon.L2.Battle
 
         [SerializeField] private CardRegistry _registry;
         [SerializeField] private int _costPerTurn = 3;
+        [SerializeField] private CardPlayerBase _me;
+        [SerializeField] private CardPlayerBase _bot;
 
-        private CardPlayerBase _me;
-        private CardPlayerBase _bot;
         private int _stage;
         private int _cost;
         private BattleState _state = BattleState.None;
+        private BattleStep _current;
 
         public BattleState State => _state;
         public CardPlayerBase LocalPlayer => _me;
@@ -53,10 +54,8 @@ namespace YoungJoon.L2.Battle
                 Instance = null;
         }
 
-        public void StartRun(CardPlayerBase me, CardPlayerBase bot)
+        public void StartRun()
         {
-            _me = me;
-            _bot = bot;
             _stage = 0;
             _me.SetDeck(MakeStartingDeck());
             StartGame();
@@ -76,13 +75,11 @@ namespace YoungJoon.L2.Battle
         private void BeginTurn(CardPlayerBase player)
         {
             _cost = _costPerTurn;
-            var step = new BattleStep();
+            _current = new BattleStep();
             foreach (var card in player.AliveFieldCards())
-            {
-                var heals = card.OnTurnStart();
-                if (heals != null && heals.Count > 0) step.Heals.AddRange(heals);
-            }
-            if (step.Heals.Count > 0) OnResolved?.Invoke(step);
+                card.OnTurnStart();
+            if (_current.Heals.Count > 0) OnResolved?.Invoke(_current);
+            _current = null;
         }
 
         public bool TryInteract(CardBase attacker, CardBase target)
@@ -92,7 +89,7 @@ namespace YoungJoon.L2.Battle
             if (_cost < attacker.Cost) return false;
 
             _cost -= attacker.Cost;
-            Resolve(attacker, target);
+            ResolveInteraction(attacker, target);
             return true;
         }
 
@@ -116,7 +113,7 @@ namespace YoungJoon.L2.Battle
                 if (target == null) break;
 
                 _cost -= attacker.Cost;
-                Resolve(attacker, target);
+                ResolveInteraction(attacker, target);
             }
 
             if (_state == BattleState.Game_BotTurn)
@@ -126,17 +123,40 @@ namespace YoungJoon.L2.Battle
             }
         }
 
-        private void Resolve(CardBase attacker, CardBase target)
+        private void ResolveInteraction(CardBase attacker, CardBase target)
         {
             if (attacker == null || attacker.IsDead || target == null || target.IsDead) return;
 
-            var step = new BattleStep();
-            step.Interaction = attacker.InteractWith(target);
-            step.Spawned.AddRange(_me.CleanupAndRefill());
-            step.Spawned.AddRange(_bot.CleanupAndRefill());
-            OnResolved?.Invoke(step);
+            _current = new BattleStep();
+            _current.Attacker = attacker;
+            _current.Target = target;
+            attacker.InteractWith(target);
+            _current.Spawned.AddRange(_me.CleanupAndRefill());
+            _current.Spawned.AddRange(_bot.CleanupAndRefill());
+            OnResolved?.Invoke(_current);
+            _current = null;
 
             CheckEnd();
+        }
+
+        public void Deal(CardBase from, CardBase victim, int amount)
+        {
+            victim.AttackedBy(new AttackSource(from, amount));
+            _current.Hits.Add(new DamageResult { Card = victim, Amount = amount, HpAfter = victim.CurrentHp, Died = victim.IsDead });
+        }
+
+        public void Block(CardBase from, CardBase target, int amount)
+        {
+            target.AddBlock(amount);
+            _current.Blocks.Add(new BlockResult { Card = target, Amount = amount });
+        }
+
+        public void Heal(CardBase from, CardBase target, int amount)
+        {
+            int before = target.CurrentHp;
+            target.HealedBy(new HealSource(from, amount));
+            if (target.CurrentHp > before)
+                _current.Heals.Add(new HealResult { Card = target, Amount = target.CurrentHp - before, HpAfter = target.CurrentHp });
         }
 
         private void CheckEnd()
@@ -148,7 +168,7 @@ namespace YoungJoon.L2.Battle
         private void EndBattle(bool playerWon)
         {
             SetState(BattleState.End);
-            Send(new BattleEndedEvent { PlayerWon = playerWon, Stage = _stage });
+            EventBus.SendEvent(new BattleEndedEvent { PlayerWon = playerWon, Stage = _stage });
         }
 
         public void PickRewardAndContinue(CardType reward)
@@ -169,13 +189,7 @@ namespace YoungJoon.L2.Battle
         private void SetState(BattleState next)
         {
             _state = next;
-            Send(new TurnChangedEvent { State = next });
-        }
-
-        private void Send<T>(T evt) where T : struct, IGameEvent
-        {
-            if (EventBus != null)
-                EventBus.SendEvent(evt);
+            EventBus.SendEvent(new TurnChangedEvent { State = next });
         }
 
         private CardBase AffordableBotAttacker()

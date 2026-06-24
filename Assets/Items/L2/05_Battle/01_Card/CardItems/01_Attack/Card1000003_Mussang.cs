@@ -26,18 +26,15 @@ namespace YoungJoon.L2.Battle.Card
                 { "splash", Mathf.RoundToInt(CurrentHp * _splashRatio) }
             };
 
-        public override InteractResult InteractWith(CardBase target)
+        public override void InteractWith(CardBase target)
         {
-            var result = new InteractResult { Attacker = this, Target = target };
             int main = Mathf.RoundToInt(CurrentHp * _damageRatio);
             int splash = Mathf.RoundToInt(CurrentHp * _splashRatio);
 
-            result.Hits.Add(Deal(this, target, main));
+            BattleManager.Instance.Deal(this, target, main);
 
             foreach (var neighbor in target.Owner.AdjacentAliveCards(target.SlotIndex))
-                result.Hits.Add(Deal(this, neighbor, splash));
-
-            return result;
+                BattleManager.Instance.Deal(this, neighbor, splash);
         }
     }
 }

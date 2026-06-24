@@ -1651,6 +1651,8 @@ MonoBehaviour:
   _rewardTabGroup: {fileID: 1916611439}
   _resultDesc: {fileID: 1272279483}
   _nextBtn: {fileID: 1641823462}
+  _me: {fileID: 1374383090}
+  _bot: {fileID: 1930637192}
 --- !u!4 &208991016
 Transform:
   m_ObjectHideFlags: 0
@@ -5604,6 +5606,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::YoungJoon.L2.Battle.BattleManager
   _registry: {fileID: 11400000, guid: 0399af649b7b1a740ac0235a0f5014e8, type: 2}
   _costPerTurn: 3
+  _me: {fileID: 1374383090}
+  _bot: {fileID: 1930637192}
 --- !u!4 &911898684
 Transform:
   m_ObjectHideFlags: 0
@@ -8370,6 +8374,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365122475}
   m_CullTransparentMesh: 1
+--- !u!1 &1374383089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1374383091}
+  - component: {fileID: 1374383090}
+  m_Layer: 0
+  m_Name: Me
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1374383090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374383089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6860c200da0d34498a4b2f5c759a3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardPlayerBase
+  _playerName: 0
+  _isBot: 0
+  _eventBus: {fileID: 0}
+--- !u!4 &1374383091
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374383089}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1418525847
 GameObject:
   m_ObjectHideFlags: 0
@@ -8567,6 +8618,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::YoungJoon.L2.Battle.View.DamageTextManager
   _layer: {fileID: 1929663783}
   _textPrefab: {fileID: 8640770947119091252, guid: abb5b4478732efd4fb790ab30f5c5d14, type: 3}
+  _riseHeight: 120
+  _duration: 0.7
 --- !u!1 &1455519115
 GameObject:
   m_ObjectHideFlags: 0
@@ -12136,6 +12189,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1930637191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1930637193}
+  - component: {fileID: 1930637192}
+  m_Layer: 0
+  m_Name: Bot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1930637192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930637191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6860c200da0d34498a4b2f5c759a3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardPlayerBase
+  _playerName: 0
+  _isBot: 0
+  _eventBus: {fileID: 0}
+--- !u!4 &1930637193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930637191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1935199001
 GameObject:
   m_ObjectHideFlags: 0
@@ -13484,6 +13584,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6495405822507531933, guid: 2b33a498852248d4b8f5d503e4c4d356, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495405822507531933, guid: 2b33a498852248d4b8f5d503e4c4d356, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6868969822458898375, guid: 2b33a498852248d4b8f5d503e4c4d356, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6868969822458898375, guid: 2b33a498852248d4b8f5d503e4c4d356, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6868969822458898375, guid: 2b33a498852248d4b8f5d503e4c4d356, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13507,3 +13627,5 @@ SceneRoots:
   - {fileID: 208991016}
   - {fileID: 2089148042}
   - {fileID: 899427261}
+  - {fileID: 1374383091}
+  - {fileID: 1930637193}

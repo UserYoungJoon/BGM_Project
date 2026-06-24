@@ -27,29 +27,19 @@ namespace YoungJoon.L2.Battle.Card
                 { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) }
             };
 
-        public override List<HealFact> OnTurnStart()
+        public override void OnTurnStart()
         {
-            var facts = new List<HealFact>();
-            if (_turnStartHeal <= 0) return facts;
-
+            if (_turnStartHeal <= 0) return;
             foreach (var ally in Owner.AliveFieldCardsExcept(this))
-            {
-                int before = ally.CurrentHp;
-                ally.HealedBy(new HealSource(this, _turnStartHeal));
-                if (ally.CurrentHp > before)
-                    facts.Add(new HealFact { Card = ally, Amount = ally.CurrentHp - before, HpAfter = ally.CurrentHp });
-            }
-            return facts;
+                BattleManager.Instance.Heal(this, ally, _turnStartHeal);
         }
 
-        public override InteractResult InteractWith(CardBase target)
+        public override void InteractWith(CardBase target)
         {
-            var result = new InteractResult { Attacker = this, Target = target };
             int damage = Mathf.RoundToInt(CurrentHp * _damageRatio);
             int counter = Mathf.RoundToInt(target.CurrentHp * _counterRatio);
-            result.Hits.Add(Deal(this, target, damage));
-            result.Hits.Add(Deal(target, this, counter));
-            return result;
+            BattleManager.Instance.Deal(this, target, damage);
+            BattleManager.Instance.Deal(target, this, counter);
         }
     }
 }

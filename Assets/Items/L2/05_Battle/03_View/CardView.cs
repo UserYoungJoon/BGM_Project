@@ -53,8 +53,8 @@ namespace YoungJoon.L2.Battle.View
             _damageFill.fillAmount = 1f;
             if (_portrait != null)
             {
-                _portrait.sprite = data.Illustration;
-                _portrait.enabled = data.Illustration != null;
+                _portrait.sprite = data.Illust;
+                _portrait.enabled = data.Illust != null;
             }
         }
 

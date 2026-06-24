@@ -19,12 +19,10 @@ namespace YoungJoon.L2.Battle.Card
         public override Dictionary<string, int> TooltipArgs()
             => new Dictionary<string, int> { { "block", Mathf.RoundToInt(MaxHp * _blockRatio) } };
 
-        public override InteractResult InteractWith(CardBase target)
+        public override void InteractWith(CardBase target)
         {
-            var result = new InteractResult { Attacker = this, Target = target };
             int block = Mathf.RoundToInt(MaxHp * _blockRatio);
-            target.AddBlock(block);
-            return result;
+            BattleManager.Instance.Block(this, target, block);
         }
     }
 }
