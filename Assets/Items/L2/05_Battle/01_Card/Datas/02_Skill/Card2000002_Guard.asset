@@ -16,7 +16,7 @@ MonoBehaviour:
   _cardName: "\uC218\uD638"
   _tooltip: "\uC120\uD0DD\uD55C \uC544\uAD70\uC5D0\uAC8C <armor>{block}</armor>\uC758
     \uBC29\uC5B4\uB3C4\uB97C \uBD80\uC5EC\uD569\uB2C8\uB2E4."
-  _illustration: {fileID: 21300000, guid: 24f0448dfb19574418c90b67227380e2, type: 3}
+  _illust: {fileID: 21300000, guid: 24f0448dfb19574418c90b67227380e2, type: 3}
   _hp: 3
   _cost: 1
   _effectParams:

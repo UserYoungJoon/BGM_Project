@@ -12,10 +12,17 @@ namespace YoungJoon.L2.Battle.Card
         private float _damageRatio;
 
         protected override void OnSpawn()
-            => _damageRatio = Data.GetData("damageBasedHpRatio");
+        {
+            _damageRatio = Data.GetData("damageBasedHpRatio");
+        }
 
         public override Dictionary<string, int> TooltipArgs()
-            => new Dictionary<string, int> { { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) } };
+        {
+            return new Dictionary<string, int> 
+            { 
+                { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) } 
+            };
+        }
 
         public override void InteractWith(CardBase target)
         {

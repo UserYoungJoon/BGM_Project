@@ -17,7 +17,12 @@ namespace YoungJoon.L2.Battle.Card
         }
 
         public override Dictionary<string, int> TooltipArgs()
-            => new Dictionary<string, int> { { "block", Mathf.RoundToInt(MaxHp * _blockRatio) } };
+        {
+            return new Dictionary<string, int>
+            {
+                { "block", Mathf.RoundToInt(MaxHp * _blockRatio) }
+            };
+        }
 
         public override void InteractWith(CardBase target)
         {

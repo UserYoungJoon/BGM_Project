@@ -20,11 +20,13 @@ namespace YoungJoon.L2.Battle.Card
         }
 
         public override Dictionary<string, int> TooltipArgs()
-            => new Dictionary<string, int>
+        {
+            return new Dictionary<string, int>
             {
                 { "dmg", Mathf.RoundToInt(CurrentHp * _damageRatio) },
                 { "splash", Mathf.RoundToInt(CurrentHp * _splashRatio) }
             };
+        }
 
         public override void InteractWith(CardBase target)
         {

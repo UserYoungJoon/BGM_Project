@@ -23,9 +23,7 @@ namespace YoungJoon.L2.Battle.Card
     {
         None = 0,
         EnemyCard = 1 << 0,
-        AllyCard = 1 << 1,
-        EnemyPlayer = 1 << 2,
-        AllyPlayer = 1 << 3,
+        AllyCard = 1 << 1
     }
 
     public enum CardType
